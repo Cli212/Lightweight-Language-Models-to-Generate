@@ -2,4 +2,8 @@ mmh3
 bpemb
 pytorch
 pytorch_lightning
+nltk
+torchtext
+matplotlib
+pandas
 sklearn

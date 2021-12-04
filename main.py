@@ -78,7 +78,7 @@ if __name__ == '__main__':
         f.writelines('------------------- end -------------------')
     if args.mode == 'train':
         # Prepare dataset
-        df = pd.read_csv(args.corpus_path)[:400000]
+        df = pd.read_csv(args.corpus_path)[:200000]
         # loadFilename = os.path.join(save_dir, model_name, corpus_name,
         #                            '{}-{}_{}'.format(encoder_n_layers, decoder_n_layers, hidden_size),
         #                            '{}_checkpoint.tar'.format(checkpoint_iter))
