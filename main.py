@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Load model if a loadFilename is provided
     if loadFilename:
         # If loading on same machine the model was trained on
-        checkpoint = torch.load(loadFilename)
+        checkpoint = torch.load(loadFilename, map_location=device)
         # If loading a model trained on GPU to CPU
         # checkpoint = torch.load(loadFilename, map_location=torch.device('cpu'))
         encoder_sd = checkpoint['en']
@@ -159,7 +159,10 @@ if __name__ == '__main__':
             if loadFilename:
                 embedding.load_state_dict(embedding_sd)
             # Initialize encoder & decoder models
-            encoder = EncoderRNN(args.hidden_size, embedding, args.encoder_n_layers, args.dropout)
+            if args.proj:
+                encoder = encoder = EncoderPQRNN(args.emb_size, args.hidden_size, args.encoder_n_layers, args.dropout)
+            else:
+                encoder = EncoderRNN(args.hidden_size, embedding, args.encoder_n_layers, args.dropout)
             decoder = LuongAttnDecoderRNN(args.attn_model, embedding, args.hidden_size, voc.num_words,
                                           args.decoder_n_layers, args.dropout)
             if loadFilename:
@@ -183,7 +186,10 @@ if __name__ == '__main__':
         if loadFilename:
             embedding.load_state_dict(embedding_sd)
         # Initialize encoder & decoder models
-        encoder = EncoderRNN(args.hidden_size, embedding, args.encoder_n_layers, args.dropout)
+        if args.proj:
+            encoder = encoder = EncoderPQRNN(args.emb_size,args.hidden_size, args.encoder_n_layers, args.dropout)
+        else:
+            encoder = EncoderRNN(args.hidden_size, embedding, args.encoder_n_layers, args.dropout)
         decoder = LuongAttnDecoderRNN(args.attn_model, embedding, args.hidden_size, voc.num_words,
                                       args.decoder_n_layers, args.dropout)
         if loadFilename:

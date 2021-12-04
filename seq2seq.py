@@ -653,7 +653,6 @@ def unicodeToAscii(s):
 def evaluateInput(searcher, voc, max_length, device, proj_feature_size=None):
     from bpemb import BPEmb
     bpemb_en = BPEmb(lang="en", dim=100)
-    input_sentence = ''
     while (1):
         try:
             # Get input sentence
@@ -664,7 +663,7 @@ def evaluateInput(searcher, voc, max_length, device, proj_feature_size=None):
             input_sentence = normalizeString(input_sentence)
             # words -> indexes
             index_batch = [voc.word2index[word] for word in bpemb_en.encode(input_sentence)]
-            dataloader = create_dataloader_from_sentence([(index_batch, index_batch)], voc, max_length, proj_feature_size)
+            dataloader = create_dataloader_from_sentence([(index_batch, index_batch)], voc, max_length, proj_feature_size*2 if proj_feature_size else None)
             # Evaluate sentence
             original_tokens = []
             decoded_tokens = []
