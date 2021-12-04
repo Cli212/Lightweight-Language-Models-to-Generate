@@ -1,6 +1,6 @@
 # Lightweight-Language-Models-to-Generate
 
-First, put the preprocessed in directory [data](./data), and use [this notebook](./data/remove_empty_and_duplicates.ipynb) to remove the empty and duplicate lines from the processed data.
+First, put the preprocessed in directory [data](./data), and use [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) to remove the empty and duplicate lines from the processed data.
 
 To train the model:
 
