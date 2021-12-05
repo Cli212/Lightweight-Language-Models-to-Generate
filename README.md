@@ -1,6 +1,12 @@
 # Lightweight-Language-Models-to-Generate
 
-First, put the preprocessed data in directory [data](./data), and use [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) to remove the empty and duplicate lines from the processed data.
+## Data
+
+Download the [data](https://www.kaggle.com/thoughtvector/customer-support-on-twitter). Use [this script](./preprocess.ipynb) to preprocess the data and save the results. After the preprocessing, [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) can be used to remove the empty and duplicate lines from the processed data.
+
+## Train and Test
+
+Assume we put the preprocessed data in directory [data](./data). 
 
 To train the model:
 
@@ -10,7 +16,7 @@ python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data
 
 the trained model and checkpoints will be automatically saved in the \${save_dir}/\${corpus_name}/\${model_name}
 
-or you can try to use [PQRNN](https://arxiv.org/pdf/2101.08890.pdf) as a encoder by activating projection (--proj):
+or you can try to use [PRADO](https://aclanthology.org/D19-1506.pdf) as a encoder by activating projection (--proj):
 
 ```shell
 python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data/vocab.txt --proj
@@ -24,12 +30,18 @@ Or you can also manually test the model by loading a saved checkpoint:
 python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data/vocab.txt --load_model_path saved-checkpoint-file --mode val
 ```
 
-Besides, you can interactively have a conversation with the bot by:
-
-```shell
-python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data/vocab.txt --load_model_path saved-checkpoint-file
---mode test
-```
-
 Evaluation script can be found [here](chatbot-evaluation.ipynb)
 
+## Chat
+
+Besides, if you want to skip the preprocessing and training process, you can directly use our trained checkpoints to load the parameters. Then you can have a chat with the bot from command line:
+
+```shell
+python main.py --load_model_path saved_models/customQA/gru/2-2_256/29_checkpoint.tar --mode test
+```
+
+
+
+![command_line_chat](./command_line_chat.png)
+
+If you want to load prado model in [this](saved_models/customQA/gru/2-2_256/29_checkpoint.tar), remember to use --proj to activate projection in command.
