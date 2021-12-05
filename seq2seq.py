@@ -19,6 +19,9 @@ from prado.data import create_dataloader_from_sentence
 
 
 class EncoderRNN(nn.Module):
+    """
+    An encoder with RNN as the backbone model
+    """
     def __init__(self, hidden_size, embedding, n_layers=1, dropout=0):
         super(EncoderRNN, self).__init__()
         self.n_layers = n_layers
@@ -52,23 +55,19 @@ class EncoderRNN(nn.Module):
 
 
 class EncoderPQRNN(nn.Module):
+    """
+    The projection-based models encoder.
+    """
     def __init__(self, hidden_size, emb_size, n_layers=1, dropout=0):
         super(EncoderPQRNN, self).__init__()
         self.n_layers = n_layers
         self.hidden_size = hidden_size
 
-        # Initialize GRU; the input_size and hidden_size params are both set to 'hidden_size'
-        #   because our input size is a word embedding with number of features == hidden_size
-        # self.gru = nn.GRU(hidden_size, hidden_size, n_layers,
-        #                   dropout=(0 if n_layers == 1 else dropout), bidirectional=True)
+        # Initialize PQRNN; the b and d params are set to hyperparameters hidden_size and emb_size
         self.model = PQRNN(b=hidden_size, d=emb_size, num_layers=n_layers, dropout=dropout, output_size=hidden_size,
                            rnn_type="GRU", multilabel=False, nhead=2)
 
     def forward(self, projection, hidden=None):
-        # Convert word indexes to embeddings
-        # embedded = self.embedding(input_seq)
-        # Pack padded batch of sequences for RNN module
-        # Return output and final hidden state
         return self.model(projection, hidden)
 
 
@@ -166,11 +165,18 @@ class LuongAttnDecoderRNN(nn.Module):
 
 
 def maskNLLLoss(inp, target, mask, device):
+    """
+     This loss function calculates the average negative log likelihood of the elements that correspond to a 1 in the mask tensor.
+    :param inp:
+    :param target:
+    :param mask:
+    :param device:
+    :return:
+    """
     # loss_fn = nn.CrossEntropyLoss()
     nTotal = mask.sum()
     crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)).squeeze(1))
     loss = crossEntropy.masked_select(mask).mean()
-    # loss = loss_fn(inp, target)
     loss = loss.to(device)
     return loss, nTotal.item()
 
@@ -439,50 +445,6 @@ def token2word(token_list, voc):
     return results
 
 
-# class GreedySearchDecoder(nn.Module):
-#     def __init__(self, encoder, decoder, device, SOS_token, EOS_token, batch_size):
-#         super(GreedySearchDecoder, self).__init__()
-#         self.encoder = encoder
-#         self.decoder = decoder
-#         self.device = device
-#         self.SOS_token = SOS_token
-#         self.EOS_token = EOS_token
-#         self.batch_size = batch_size
-#
-#     def forward(self, input_seq, input_length, max_length):
-#         # Forward input through encoder model
-#         encoder_outputs, encoder_hidden = self.encoder(input_seq, input_length)
-#         # Prepare encoder's final hidden layer to be first hidden input to the decoder
-#         decoder_hidden = encoder_hidden[:self.decoder.n_layers]
-#         # Initialize decoder input with SOS_token
-#         # Create initial decoder input (start with SOS tokens for each sentence)
-#         decoder_input = torch.LongTensor([[self.SOS_token] for _ in range(self.batch_size)])
-#         decoder_input = decoder_input.to(self.device)
-#
-#         # decoder_input = torch.ones(1, 1, device=self.device, dtype=torch.long) * self.SOS_token
-#         # Initialize tensors to append decoded words to
-#         # all_tokens = torch.zeros([0], device=self.device, dtype=torch.long)
-#         # all_scores = torch.zeros([0], device=self.device)
-#         all_tokens = []
-#         all_scores = []
-#         # Iteratively decode one word token at a time
-#         for _ in range(max_length):
-#             # Forward pass through decoder
-#             decoder_output, decoder_hidden = self.decoder(decoder_input, decoder_hidden, encoder_outputs)
-#             # Obtain most likely word token and its softmax score
-#             decoder_scores, decoder_input = torch.max(decoder_output, dim=1)
-#             # Record token and score
-#             # all_tokens = torch.cat((all_tokens, decoder_input), dim=0)
-#             # all_scores = torch.cat((all_scores, decoder_scores), dim=0)
-#             all_tokens.append(decoder_input.detach().tolist())
-#             all_scores.append(decoder_scores.detach().tolist())
-#             # Prepare current token to be next decoder input (add a dimension)
-#             decoder_input = torch.unsqueeze(decoder_input, 0).T
-#         all_tokens = np.asarray(all_tokens).T.tolist()
-#         # Return collections of word tokens and scores
-#         return all_tokens, all_scores
-
-
 class BeamSearchNode(object):
     def __init__(self, hiddenstate, previousNode, wordId, logProb, length):
         '''
@@ -511,6 +473,9 @@ class BeamSearchNode(object):
 
 
 class BeamSearchDecoder(nn.Module):
+    """
+    A beam search decoder, when the beam width is 1, the decoder will degrade to a greedy search decoder.
+    """
     def __init__(self, encoder, decoder, device, SOS_token, EOS_token, batch_size, beam_width=10):
         super(BeamSearchDecoder, self).__init__()
         self.encoder = encoder
@@ -625,32 +590,17 @@ def unicodeToAscii(s):
     )
 
 
-# def evaluate(searcher, voc, indexes_batch, max_length, device):
-#     ### Format input sentence as a batch
-#     # Create lengths tensor
-#     lengths = torch.tensor([len(indexes) for indexes in indexes_batch])
-#     # Transpose dimensions of batch to match models' expectations
-#     input_batch = torch.LongTensor(indexes_batch).to(device)
-#     # Use appropriate device
-#     lengths = lengths.to(device)
-#     # Decode sentence with searcher
-#     tokens = searcher(input_batch, lengths, max_length)
-#     # indexes -> words
-#     decoded_words = []
-#     for token in tokens:
-#         print(token)
-#         if voc.index2word[token.item()].startswith('▁'):
-#             decoded_words.append(voc.index2word[token.item()].lstrip('▁'))
-#         else:
-#             if decoded_words == []:
-#                 decoded_words.append(voc.index2word[token.item()])
-#             else:
-#                 decoded_words[-1] = decoded_words[-1] + voc.index2word[token.item()]
-#
-#     return decoded_words
-
 
 def evaluateInput(searcher, voc, max_length, device, proj_feature_size=None):
+    """
+    The function that accepts a input from command line and generate a response
+    :param searcher:
+    :param voc:
+    :param max_length:
+    :param device:
+    :param proj_feature_size:
+    :return:
+    """
     from bpemb import BPEmb
     bpemb_en = BPEmb(lang="en", dim=100)
     while (1):
@@ -677,13 +627,6 @@ def evaluateInput(searcher, voc, max_length, device, proj_feature_size=None):
                 assert len(o_tokens) == len(d_tokens)
                 original_tokens.extend(o_tokens)
                 decoded_tokens.extend(d_tokens)
-                # original_sentence, decoded_sentence = ' '.join(original_words), ' '.join(decoded_words)
-                # df_list.append(pd.DataFrame({'original':[original_sentence], 'predicted':[decoded_sentence]}))
-            # Return result
-
-            # output_words = evaluate(searcher, voc, indexes_batch, max_length, device)
-            # Format and print response sentence
-            # output_words[:] = [x for x in output_words if not (x == 'EOS' or x == 'PAD')]
 
             print('Bot:', token2word(decoded_tokens, voc)[0])
         except KeyError:

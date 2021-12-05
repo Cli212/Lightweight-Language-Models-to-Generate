@@ -171,64 +171,6 @@ class PQRNN(pl.LightningModule):
 
         return {"logits": logits, "labels": labels}
 
-    # def validation_epoch_end(self, outputs):
-    #
-    #     logits = torch.cat([o["logits"] for o in outputs], dim=0)
-    #     labels = torch.cat([o["labels"] for o in outputs], dim=0)
-    #     if self.hyparams["multilabel"]:
-    #         self.log(
-    #             "val_auroc",
-    #             np.mean(
-    #                 [
-    #                     auroc(
-    #                         torch.sigmoid(logits[:, i]),
-    #                         labels[:, i],
-    #                         pos_label=1,
-    #                     )
-    #                     .detach()
-    #                     .cpu()
-    #                     .item()
-    #                     for i in range(logits.shape[1])
-    #                 ]
-    #             ),
-    #             prog_bar=True,
-    #         )
-    #     else:
-    #         self.log(
-    #             "val_f1",
-    #             f1_score(
-    #                 torch.argmax(logits, dim=1),
-    #                 labels,
-    #                 num_classes=self.hyparams["output_size"],
-    #                 class_reduction="macro",
-    #             )
-    #             .detach()
-    #             .cpu()
-    #             .item(),
-    #             prog_bar=True,
-    #         )
-    #         self.log(
-    #             "val_acc",
-    #             accuracy(torch.argmax(logits, dim=1), labels)
-    #             .detach()
-    #             .cpu()
-    #             .item(),
-    #             prog_bar=True,
-    #         )
-    #     self.log(
-    #         "val_loss",
-    #         self.loss(
-    #             logits,
-    #             labels.type(
-    #                 logits.dtype if self.hyparams["multilabel"] else labels.dtype
-    #             ),
-    #         )
-    #         .detach()
-    #         .cpu()
-    #         .item(),
-    #         prog_bar=True,
-    #     )
-
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hyparams["lr"])
         scheduler = ReduceLROnPlateau(optimizer, "min")
