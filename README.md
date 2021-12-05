@@ -30,7 +30,7 @@ Or you can also manually test the model by loading a saved checkpoint:
 python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data/vocab.txt --load_model_path saved-checkpoint-file --mode val
 ```
 
-Evaluation script can be found [here](chatbot-evaluation.ipynb)
+Evaluation script can be found [here](./tests/chatbot-evaluation.ipynb)
 
 ## Chat
 
