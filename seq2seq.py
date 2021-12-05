@@ -115,6 +115,9 @@ class Attn(nn.Module):
 
 
 class LuongAttnDecoderRNN(nn.Module):
+    """
+    This is the decoder class that includes attention model, embedding model and decoder
+    """
     def __init__(self, attn_model, embedding, hidden_size, output_size, n_layers=1, dropout=0.1):
         super(LuongAttnDecoderRNN, self).__init__()
 
@@ -183,6 +186,9 @@ def maskNLLLoss(inp, target, mask, device):
 
 def train(input_variable, lengths, target_variable, mask, max_target_len, encoder, decoder, SOS,
           encoder_optimizer, decoder_optimizer, batch_size, teacher_forcing_ratio, clip, device):
+    """
+    Training function for one iteration
+    """
     # Zero gradients
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
@@ -256,6 +262,9 @@ def train(input_variable, lengths, target_variable, mask, max_target_len, encode
 
 def train_pqrnn(input_variable, lengths, target_variable, mask, max_target_len, encoder, decoder, SOS,
                 encoder_optimizer, decoder_optimizer, batch_size, teacher_forcing_ratio, clip, device):
+    """
+    training function for prado and pqrnn that used projection EncoderRNN
+    """
     # Zero gradients
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
@@ -329,6 +338,9 @@ def train_pqrnn(input_variable, lengths, target_variable, mask, max_target_len, 
 
 def trainIters(voc, dataloader, encoder, decoder, encoder_optimizer, decoder_optimizer, embedding, batch_size, n_epoch, SOS, directory, print_every, clip,
                teacher_forcing_ratio, device, pqrnn=False):
+    """
+    The train functions that train n_epoch of all the data iteratively
+    """
     # Load batches for each iteration
     # training_batches = [batch2TrainData(voc, [random.choice(pairs) for _ in range(batch_size)])
     # for _ in range(n_iteration)]
@@ -381,6 +393,9 @@ def trainIters(voc, dataloader, encoder, decoder, encoder_optimizer, decoder_opt
 
 
 def val(voc, searcher, input_variable, lengths, target_variable, mask, max_target_len, device, pqrnn):
+    """
+    The inference function, every time accept a batch of data and out put the generated tokens
+    """
     # Set device options
     input_variable = input_variable.to(device)
     # target_variable = target_variable.to(device)
@@ -398,6 +413,9 @@ def val(voc, searcher, input_variable, lengths, target_variable, mask, max_targe
 
 
 def valIters(voc, dataloader, searcher, device, pqrnn=False):
+    """
+    Infer all the data iteratively
+    """
     # Load batches for each iteration
     # training_batches = [batch2TrainData(voc, [random.choice(pairs) for _ in range(batch_size)])
     # for _ in range(n_iteration)]

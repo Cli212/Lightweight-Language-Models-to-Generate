@@ -7,6 +7,7 @@ import torch.nn as nn
 from seq2seq import EncoderRNN, EncoderPQRNN, LuongAttnDecoderRNN, BeamSearchDecoder, trainIters, valIters, evaluateInput
 from prado.data import create_dataloaders, Voc
 
+# parser function
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--corpus_path", default='data/index_without_duplicates.csv')
