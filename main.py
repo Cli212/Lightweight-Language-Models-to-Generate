@@ -70,6 +70,7 @@ if __name__ == '__main__':
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    ## Save the arguments to setting.txt
     argsDict = args.__dict__
     with open(os.path.join(directory, 'setting.txt'), 'w') as f:
         f.writelines('------------------ start ------------------' + '\n')
