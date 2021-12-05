@@ -1,6 +1,6 @@
 # Lightweight-Language-Models-to-Generate
 
-First, put the preprocessed in directory [data](./data), and use [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) to remove the empty and duplicate lines from the processed data.
+First, put the preprocessed data in directory [data](./data), and use [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) to remove the empty and duplicate lines from the processed data.
 
 To train the model:
 
@@ -30,4 +30,6 @@ Besides, you can interactively have a conversation with the bot by:
 python main.py --corpus_path data/index_without_duplicates.csv --vocab_path data/vocab.txt --load_model_path saved-checkpoint-file
 --mode test
 ```
+
+Evaluation script can be found [here](chatbot-evaluation.ipynb)
 
