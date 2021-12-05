@@ -2,7 +2,7 @@
 
 ## Data
 
-Download the [data](https://www.kaggle.com/thoughtvector/customer-support-on-twitter). Use [this script](./preprocess.ipynb) to preprocess the data and save the results. After the preprocessing, [this notebook](./data/remove_empty_and_duplicate_questions.ipynb) can be used to remove the empty and duplicate lines from the processed data.
+Download the [data](https://www.kaggle.com/thoughtvector/customer-support-on-twitter). Use [this script](./data/preprocess.ipynb) to preprocess the data and save the results. 
 
 ## Train and Test
 
@@ -42,6 +42,6 @@ python main.py --load_model_path saved_models/customQA/gru/2-2_256/29_checkpoint
 
 
 
-![command_line_chat](./command_line_chat.png)
+![command_line_chat](./tests/command_line_chat.png)
 
 If you want to load prado model in [this](saved_models/customQA/gru/2-2_256/29_checkpoint.tar), remember to use --proj to activate projection in command.
