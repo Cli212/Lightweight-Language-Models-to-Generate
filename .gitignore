@@ -133,4 +133,3 @@ __pycache__/
 data/.ipynb_checkpoints/
 data/*.csv
 data/vocab.txt
-saved_models/
